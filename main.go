@@ -7,29 +7,46 @@ import (
 	"net/http"
 )
 
-type Location struct {
-	Loc string `xml:"loc"`
-}
-
 type SiteMapIndex struct {
-	Locations []Location `xml:"sitemap"`
+	Locations []string `xml:"sitemap>loc"`
 }
 
-func (location Location) String() string {
-	return fmt.Sprintf(location.Loc)
+type News struct {
+	Titles    []string `xml:"url>news>title"`
+	Keywords  []string `xml:"url>news>keywords"`
+	Locations []string `xml:"url>loc"`
 }
 
-func getBodyData(address string) {
-	response, _ := http.Get(address)
-	bytes, _ := ioutil.ReadAll(response.Body)
-	response.Body.Close()
-
-	var siteMapIndex SiteMapIndex
-	xml.Unmarshal(bytes, &siteMapIndex)
-
-	fmt.Println(siteMapIndex.Locations)
+type NewsMap struct {
+	Keyword  string
+	Location string
 }
 
 func main() {
-	getBodyData("https://www.washingtonpost.com/news-sitemap-index.xml")
+	var siteMapIndex SiteMapIndex
+	var news News
+	newsMap := make(map[string]NewsMap)
+
+	response, _ := http.Get("https://www.washingtonpost.com/news-sitemap-index.xml")
+	bytes, _ := ioutil.ReadAll(response.Body)
+	// response.Body.Close()
+
+	xml.Unmarshal(bytes, &siteMapIndex)
+
+	for _, Location := range siteMapIndex.Locations {
+		response, _ := http.Get(Location)
+		bytes, _ := ioutil.ReadAll(response.Body)
+		// response.Body.Close()
+
+		xml.Unmarshal(bytes, &news)
+
+		for index, _ := range news.Keywords {
+			newsMap[news.Titles[index]] = NewsMap{news.Keywords[index], news.Locations[index]}
+		}
+	}
+
+	for index, data := range newsMap {
+		fmt.Println(index, data)
+	}
+
 }
