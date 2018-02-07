@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+
+    <title>News Aggregator</title>
+</head>
+<body>
+    <h1>{{.Title}}</h1>
+
+    <table id="fancytable" class="display">
+        <col width="35%">
+        <col width="65%">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Keywords</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range $key, $value := .News }}
+                <tr>
+                <td><a href="{{ $value.Location }}" target='_blank'>{{ $key }}</td>
+                <td>{{ $value.Keyword }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+    
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+    
+    <script>
+        $(document).ready(() => {
+            $('#fancytable').DataTable()
+        })
+    </script> 
+</body>
+</html>
