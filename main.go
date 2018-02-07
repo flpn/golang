@@ -29,14 +29,11 @@ func main() {
 
 	response, _ := http.Get("https://www.washingtonpost.com/news-sitemap-index.xml")
 	bytes, _ := ioutil.ReadAll(response.Body)
-	// response.Body.Close()
-
 	xml.Unmarshal(bytes, &siteMapIndex)
 
 	for _, Location := range siteMapIndex.Locations {
 		response, _ := http.Get(Location)
 		bytes, _ := ioutil.ReadAll(response.Body)
-		// response.Body.Close()
 
 		xml.Unmarshal(bytes, &news)
 
